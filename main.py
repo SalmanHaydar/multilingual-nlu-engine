@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify,session, render_template,redirect, url
 import numpy as np
 import pandas as pd
 from flair.embeddings import ELMoEmbeddings
-from flair.data import Sentence
 from sklearn.utils import shuffle
 from sklearn.metrics.pairwise import cosine_similarity
 import pickle
@@ -46,7 +45,7 @@ def get_feature_vector_train(sentences,embedding=None):
       
       temp_placeholder = []
       for token in s:
-        temp_placeholder.append(token.embedding.numpy().reshape(1,-1))
+        temp_placeholder.append(token.embedding.numpy())
         
       sentence_vectors.append(np.mean(temp_placeholder,axis=0))
       
@@ -63,7 +62,7 @@ def get_feature_vector_infer(sentence,embedding=None):
 
     temp_placeholder = []
     for token in sent:
-      temp_placeholder.append(token.embedding.numpy().reshape(1,-1))
+      temp_placeholder.append(token.embedding.numpy())
 
     sent_embd = np.mean(temp_placeholder,axis=0)
 
