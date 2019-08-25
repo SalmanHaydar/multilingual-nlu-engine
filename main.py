@@ -21,7 +21,7 @@ from features import FeatureExtractor
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/getIntent/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/getintent/*": {"origins": "*"}})
 abs_path = os.path.dirname(os.path.abspath(__file__))
 allenNLP = os.path.join(abs_path,"MODELS/.allennlp")
 BOT_BASE = os.path.join(abs_path,"BOT_DATA")
@@ -29,7 +29,7 @@ BOT_BASE = os.path.join(abs_path,"BOT_DATA")
 os.environ["ALLENNLP_CACHE_ROOT"] = allenNLP
 
 try:
-    print("Loeading Model in a RAM...")
+    print("Loading Model in a RAM...")
     elmo_embedding = ELMoEmbeddings('original')
     print("Model Loaded in a RAM successfully...")
 except:
@@ -150,7 +150,8 @@ def createprofile():
 @app.route("/",methods=["GET","POST"])
 def index():
   if request.method == "GET" or request.method=="POST":
-    return json.dumps('please see the api documentation.. https://docs.google.com/document/d/1twwLx2g315XpymM60ia7XZMF7ve-lTvm0IrbgfFtErg/edit?usp=sharing')
+    return render_template('index.html')
+    # return json.dumps('please see the api documentation.. https://docs.google.com/document/d/1twwLx2g315XpymM60ia7XZMF7ve-lTvm0IrbgfFtErg/edit?usp=sharing')
 
 if __name__=="__main__":
     app.run(host="0.0.0.0",debug=True)

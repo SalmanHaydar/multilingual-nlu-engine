@@ -12,6 +12,7 @@ build/
 MODELS/
 models/
 develop-eggs/
+features.py
 dist/
 downloads/
 eggs/
