@@ -61,11 +61,16 @@ def getIntent():
         # print(os.listdir(os.path.join(into_home,"trained_data")))
         for intent in intent_files:
             intent_vec = np.load(os.path.join(trained_data_repo,intent+".npy"))
-            result_dic[intent] = cosine_similarity(query_vec,intent_vec)
+            result_dic[intent] = str(cosine_similarity(query_vec,intent_vec)[0][0])
         print(result_dic)
         res = max(result_dic, key=result_dic.get)
-        payloads["intent"] = res
-        payloads["confidence"] = str(result_dic)
+
+        if float(result_dic[res]) < 0.45:
+          payloads["intent"] = "unknown"
+        else:
+          payloads["intent"] = res
+
+        payloads["confidence"] = result_dic
 
         return json.dumps(payloads)
 
