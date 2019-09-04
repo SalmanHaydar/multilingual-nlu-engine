@@ -22,7 +22,7 @@ class FeatureExtractor:
                 
                 temp_placeholder = []
                 for token in s:
-                    temp_placeholder.append(token.embedding.numpy().reshape(1,-1))
+                    temp_placeholder.append(token.embedding.cpu().numpy().reshape(1,-1))
                 
             sentence_vectors.append(np.mean(temp_placeholder,axis=0))
 
@@ -40,7 +40,7 @@ class FeatureExtractor:
 
             temp_placeholder = []
             for token in sent:
-                temp_placeholder.append(token.embedding.numpy().reshape(1,-1))
+                temp_placeholder.append(token.embedding.cpu().numpy().reshape(1,-1))
 
             sent_embd = np.mean(temp_placeholder,axis=0)
 
