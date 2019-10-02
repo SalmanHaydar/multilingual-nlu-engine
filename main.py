@@ -153,6 +153,7 @@ def createprofile():
       except:
         return json.dumps('cannot create the profile')
       # if r==0:
+      #  
       #   BOT_HOME = os.path.join(BOT_BASE,bot_id)
       #   rr = os.mkdir(BOT_HOME+"/training_data")
       #   rrr = os.mkdir(BOT_HOME+"/trained_data")
@@ -168,7 +169,7 @@ def createprofile():
 @app.route("/",methods=["GET","POST"])
 def index():
   if request.method == "GET" or request.method=="POST":
-    return render_template('index.html')
+    return render_template('sample-add.html')
     # return json.dumps('please see the api documentation.. https://docs.google.com/document/d/1twwLx2g315XpymM60ia7XZMF7ve-lTvm0IrbgfFtErg/edit?usp=sharing')
 
 if __name__=="__main__":
