@@ -63,7 +63,7 @@ def getIntent():
         print(result_dic)
         res = max(result_dic, key=result_dic.get)
 
-        if float(result_dic[res]) < 0.70:
+        if float(result_dic[res]) < 0.50:
           payloads["intent"] = "unknown"
         else:
           payloads["intent"] = res
