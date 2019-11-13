@@ -41,7 +41,7 @@ def getIntent():
 
   if request.method == "GET":
 
-    payloads = {"intent":"","confidence":""}
+    payloads = {"Status":"","Message":"","intent":"","confidence":""}
     bot_id = request.args.get("botID")
     sentence = request.args.get("sentence").lower()
     # print(request.args)
@@ -65,21 +65,27 @@ def getIntent():
 
         if float(result_dic[res]) < 0.50:
           payloads["intent"] = "unknown"
+          payloads["Status"] = "success"
+          payloads["Message"] = "Couldn't understand properly"
         else:
           payloads["intent"] = res
+          payloads["Status"] = "success"
+          payloads["Message"] = "null"
 
         payloads["confidence"] = result_dic
 
         return json.dumps(payloads)
 
       else:
-        return json.dumps('Error!! Your Bot is not yet trained')
+        
+        return json.dumps({"Status":"failed","Message":'Error!! Your Bot is not yet trained',"intent":"null","confidence":"null"})
 
     else:
-      return json.dumps('Error!! No Bot found with this Bot ID'), 404
+      
+      return json.dumps({"Status":"failed","Message":'Error!! No Bot found with this Bot ID',"intent":"null","confidence":"null"}), 404
 
   else:
-      return json.dumps('This method is not allowed'), 405
+      return json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}), 405
 
 
 @app.route("/addexample",methods=["GET","POST","PUT"])
@@ -97,15 +103,15 @@ def addexample():
       #if the file exist insert the data to the existing data repository
       df = pd.DataFrame({"sentence":[sentence],"intent":[intent]})
       df.to_csv(os.path.join(training_data_home,bot_id+".csv"),mode="a",header=False,index=False)
-      return json.dumps('Added Successfully!')
+      return json.dumps({"Status":"success","Message":'Added Successfully',"intent":"null","confidence":"null"})
     else:
       #else create a new data repository with the name <bot_id.csv>
       df = pd.DataFrame({"sentence":[sentence],"intent":[intent]})
       df.to_csv(os.path.join(training_data_home,bot_id+".csv"),columns=df.columns,index=False)
-      return json.dumps('Added Successfully!')
+      return json.dumps({"Status":"success","Message":'Added Successfully',"intent":"null","confidence":"null"})
   else:
     #for the methods other than PUT
-    return json.dumps('This method is not allowed!'), 405
+    return json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}), 405
 
 @app.route("/train",methods=["GET","POST"])
 def train():
@@ -126,15 +132,15 @@ def train():
           feature_vector = extractor.get_feature_vector_train(sentences)
           np.save(os.path.join(trained_data_home,intent+".npy"),feature_vector)
         except:
-          return json.dumps('Something bad happened'),500
+          return json.dumps({"Status":"failed","Message":'INTERNAL ERROR!',"intent":"null","confidence":"null"}),500
 
-      return json.dumps('Training has completed')
+      return json.dumps({"Status":"success","Message":'Training has completed',"intent":"null","confidence":"null"})
 
     else:
-      return json.dumps('You have no data to train.'), 404
+      return json.dumps({"Status":"failed","Message":'You have no data to train',"intent":"null","confidence":"null"}), 404
     
   else:
-    return json.dumps('*This method is not allowed'), 405
+    return json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}), 405
 
 @app.route("/createprofile",methods=["GET","POST"])
 def createprofile():
@@ -147,11 +153,12 @@ def createprofile():
           BOT_HOME = os.path.join(BOT_BASE,bot_id)
           os.mkdir(BOT_HOME+"/training_data")
           os.mkdir(BOT_HOME+"/trained_data")
-          return json.dumps('Bot Profile has created successfully')
+
+          return json.dumps({"Status":"success","Message":'Bot Profile has created successfully',"intent":"null","confidence":"null"})
         except:
-          return json.dumps('cannot create the profile')
+          return json.dumps({"Status":"failed","Message":'cannot create the profile',"intent":"null","confidence":"null"})
       except:
-        return json.dumps('cannot create the profile')
+        return json.dumps({"Status":"failed","Message":'cannot create the profile',"intent":"null","confidence":"null"})
       # if r==0:
       #  
       #   BOT_HOME = os.path.join(BOT_BASE,bot_id)
@@ -164,7 +171,8 @@ def createprofile():
       # else:
       #   return json.dumps('cannot create the profile [r]')
     else:
-      return json.dumps('Bot with this ID is already exists')
+      
+      return json.dumps({"Status":"failed","Message":'Bot with this ID is already exists',"intent":"null","confidence":"null"})
 
 @app.route("/",methods=["GET","POST"])
 def index():
