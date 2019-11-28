@@ -8,7 +8,7 @@ class FeatureExtractor:
     def __init__(self,embedding=None):
         self.wv = embedding
         
-        self.pruning_factor_alpha = 0.5
+        self.pruning_factor_alpha = 1
 
 
     def get_feature_vector_train(self,sentences,path):
@@ -48,15 +48,15 @@ class FeatureExtractor:
             raise Exception('Please pass the KeyedVectors object.')
 
         else:
-
+            total_matched_words = 0
             with open (path, 'rb') as fp:
                 vocab_repo = pickle.load(fp)
-
+            
             temp_placeholder = []
             for token in sentence.split():
                 try:
                     if token in vocab_repo:
-                        
+                        total_matched_words = total_matched_words + 1
 #                         unit_vector = self.wv[token]/np.linalg.norm(self.wv[token])
                         temp_placeholder.append(self.wv[token])
                     else:
@@ -72,9 +72,9 @@ class FeatureExtractor:
                 for vector in temp_placeholder:
                     summation = np.add(summation,vector)
                 sent_embd = summation
-                return sent_embd.reshape(1,-1)
+                return sent_embd.reshape(1,-1), total_matched_words/len(sentence.split(" "))
             else:
-                return np.zeros(1024,dtype=np.float32).reshape(1,-1)
+                return np.zeros(1024,dtype=np.float32).reshape(1,-1), total_matched_words/len(sentence.split(" "))
 
     def store_vocab(self,sentences,path):
 

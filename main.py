@@ -56,7 +56,7 @@ def getIntent():
 
       vocab_home = os.path.join(into_home,"vocab_repo")
       vocab_file_path = os.path.join(vocab_home,bot_id+".pickle")
-      query_vec = extractor.get_feature_vector_infer(sentence,vocab_file_path)
+      query_vec,matched_words_ratio = extractor.get_feature_vector_infer(sentence,vocab_file_path)
 
       if(os.path.exists(os.path.join(into_home,"trained_data"))):
         intent_files = [ f.split(".")[0] for f in os.listdir(os.path.join(into_home,"trained_data"))]
@@ -70,13 +70,17 @@ def getIntent():
         # print(os.listdir(os.path.join(into_home,"trained_data")))
         for intent in intent_files:
             intent_vec = np.load(os.path.join(trained_data_repo,intent+".npy"))
-            result_dic[intent] = distance.euclidean(query_vec,intent_vec)
-            confidence[intent] = str(distance.euclidean(query_vec,intent_vec))
+            result_dic[intent] = cosine_similarity(query_vec,intent_vec)[0][0]
+            # confidence[intent] = str(distance.euclidean(query_vec,intent_vec))
             confidence_cosine[intent] = str(cosine_similarity(query_vec,intent_vec)[0][0])
         print(result_dic)
-        res = min(result_dic, key=result_dic.get)
+        res = max(result_dic, key=result_dic.get)
 
-        if float(result_dic[res]) > 20.0:
+        if matched_words_ratio*100>50.0 and float(result_dic[res])*100 < 50.0:
+          payloads["intent"] = "unknown"
+          payloads["Status"] = "success"
+          payloads["Message"] = "Couldn't understand properly"
+        elif matched_words_ratio*100<50.0 and float(result_dic[res])*100 < 70.0:
           payloads["intent"] = "unknown"
           payloads["Status"] = "success"
           payloads["Message"] = "Couldn't understand properly"
@@ -85,8 +89,8 @@ def getIntent():
           payloads["Status"] = "success"
           payloads["Message"] = "null"
 
-        payloads["confidence"] = confidence
-        payloads['confidence_cosine'] = confidence_cosine
+        # payloads["confidence"] = confidence
+        payloads['confidence'] = confidence_cosine
 
         return Response(json.dumps(payloads),mimetype='application/json')
 
