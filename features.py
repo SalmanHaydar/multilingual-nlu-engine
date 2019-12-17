@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 import os
+from utills import UtilityFunction
 
 
 class FeatureExtractor:
@@ -18,6 +19,8 @@ class FeatureExtractor:
 
         else:
             self.store_vocab(sentences,path)
+            preprocessing = UtilityFunction(sentences)
+            sentences = preprocessing.preprocess()
             sentence_vectors = []
             for sent in sentences:
 
@@ -48,6 +51,8 @@ class FeatureExtractor:
             raise Exception('Please pass the KeyedVectors object.')
 
         else:
+            preprocessing = UtilityFunction(sentence)
+            sentence = preprocessing.preprocess()
             total_matched_words = 0
             with open (path, 'rb') as fp:
                 vocab_repo = pickle.load(fp)
