@@ -16,7 +16,7 @@ class UtilityFunction:
         if type(self.sentences)==str:
             prepared_data = []
             removeChar = '০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯'.split()
-            s = re.sub('[^\u0980-\u09ffa-zA-Z?]+', ' ', str(self.sentences))
+            s = re.sub('[^\u0980-\u09ffa-zA-Z_]+', ' ', str(self.sentences))
             for j in removeChar:
                 s = s.replace(j, ' ')
             s = ' '.join(s.split())
@@ -30,7 +30,7 @@ class UtilityFunction:
             
             removeChar = '০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯'.split()
             for sent in self.sentences:
-                s = re.sub('[^\u0980-\u09ffa-zA-Z?]+', ' ', str(sent))
+                s = re.sub('[^\u0980-\u09ffa-zA-Z_]+', ' ', str(sent))
                 for j in removeChar:
                     s = s.replace(j, ' ')
                 s = ' '.join(s.split())

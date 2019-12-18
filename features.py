@@ -18,9 +18,9 @@ class FeatureExtractor:
             raise Exception('Please pass the KeyedVectors object.')
 
         else:
-            self.store_vocab(sentences,path)
             preprocessing = UtilityFunction(sentences)
             sentences = preprocessing.preprocess()
+            self.store_vocab(sentences,path)
             sentence_vectors = []
             for sent in sentences:
 
