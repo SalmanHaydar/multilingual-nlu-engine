@@ -18,7 +18,9 @@ from flask_cors import CORS
 from sklearn.metrics.pairwise import cosine_similarity
 from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
+
 from features import FeatureExtractor
+from AddExamples import AddExamples
 
 warnings.filterwarnings('ignore')
 
@@ -110,31 +112,22 @@ def getIntent():
 
 @app.route("/addexample",methods=["GET","POST","PUT"])
 def addexample():
-  #expected that bot profile is created beforehand
-  #file format .csv with 
 
   if request.method == "PUT":
-    bot_id = request.args.get("botID")
 
-    sentence = request.args.get("sentence").lower()
-    intent = request.args.get("intent")
-    BOT_HOME = os.path.join(BOT_BASE,bot_id)
-    training_data_home = os.path.join(BOT_HOME,"training_data")
-    if os.path.exists(os.path.join(training_data_home,bot_id+".csv")):
-      #if the file exist insert the data to the existing data repository
-      df = pd.DataFrame({"sentence":[sentence],"intent":[intent]})
-      df.to_csv(os.path.join(training_data_home,bot_id+".csv"),mode="a",header=False,index=False)
+    data = request.get_json(force=True)
 
-      return Response(json.dumps({"Status":"success","Message":'Added Successfully',"intent":"null","confidence":"null"}),mimetype='application/json')
+    bot_id = data.get("botID")
+    sentence = data.get("sentence")
+    intent = data.get("intent")
+    entity = data.get("entity")
 
-    else:
-      #else create a new data repository with the name <bot_id.csv>
-      df = pd.DataFrame({"sentence":[sentence],"intent":[intent]})
-      df.to_csv(os.path.join(training_data_home,bot_id+".csv"),columns=df.columns,index=False)
+    add_obj = AddExamples(bot_id, sentence, intent, entity)
+    response = add_obj.insertOne()
 
-      return Response(json.dumps({"Status":"success","Message":'Added Successfully',"intent":"null","confidence":"null"}),mimetype='application/json')
+    return Response(json.dumps(response),mimetype='application/json')
   else:
-    #for the methods other than PUT
+
     return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),mimetype='application/json',status=405)
 
 

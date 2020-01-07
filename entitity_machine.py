@@ -3,8 +3,9 @@ import os
 from fuzzywuzzy import fuzz,process
 
 class EntityExtractor:
-    def __init__(self,**kwargs):
-        pass
+    def __init__(self,botID,sentence,**kwargs):
+        self.botID = botID
+        self.sentence = sentence
 
     def getDate(self,sentence):
         dateEntity1 = re.findall(r"\d+[\./-]\d+[\./-]\d+",sentence)
