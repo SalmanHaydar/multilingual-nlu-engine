@@ -56,6 +56,7 @@ class FeatureExtractor:
         else:
             preprocessing = UtilityFunction(sentence)
             sentence = preprocessing.preprocess()
+            
             total_matched_words = 0
             with open (path, 'rb') as fp:
                 vocab_repo = pickle.load(fp)
