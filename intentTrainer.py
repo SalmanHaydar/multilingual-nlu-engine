@@ -24,6 +24,7 @@ class IntentTrainer:
     def get_extractor(self):
         if self.wv:
             extractor = FeatureExtractor(self.wv)
+            return extractor
         else:
             return False
 

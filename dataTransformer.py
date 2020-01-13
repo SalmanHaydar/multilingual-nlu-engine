@@ -54,3 +54,28 @@ class Transformer:
                 return {"Status":"failed","Message":'There is no bot with this name.',"intent":"null","confidence":"null"}, False
         else:
             return {"Status":"failed","Message":'Could not connect to the database.',"intent":"null","confidence":"null"}, False
+        
+    
+    def getDataForEntityModel(self):
+         client, collection = self.initiateDB()
+
+        if collection:
+
+            if self.doesThisBOTExist(collection):
+
+                documents = collection.find({"botID":self.botid}, {"_id":0,"botID":0})
+
+                if documents.collection.count_documents({}):
+                    client.close()
+                    return {"Status":"failed","Message":'There is no data to train',"intent":"null","confidence":"null"}, False
+                
+                client.close()
+                
+                return documents
+
+            else:
+                client.close()
+                return {"Status":"failed","Message":'There is no bot with this name.',"intent":"null","confidence":"null"}, False
+        else:
+            return {"Status":"failed","Message":'Could not connect to the database.',"intent":"null","confidence":"null"}, False
+
