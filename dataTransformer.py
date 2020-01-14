@@ -32,6 +32,7 @@ class Transformer:
             if self.doesThisBOTExist(collection):
 
                 intents = collection.find({"botID":self.botid}, {"_id":0,"botID":0,"entity":0}).distinct("intent")
+                print(intents)
                 if not intents:
                     client.close()
                     return {"Status":"failed","Message":'There is no data to train',"intent":"null","confidence":"null"}, False
@@ -57,21 +58,23 @@ class Transformer:
         
     
     def getDataForEntityModel(self):
-         client, collection = self.initiateDB()
+
+        client, collection = self.initiateDB()
 
         if collection:
+
 
             if self.doesThisBOTExist(collection):
 
                 documents = collection.find({"botID":self.botid}, {"_id":0,"botID":0})
-
-                if documents.collection.count_documents({}):
+                print(documents.collection.count_documents({}))
+                if not documents.collection.count_documents({}):
                     client.close()
                     return {"Status":"failed","Message":'There is no data to train',"intent":"null","confidence":"null"}, False
                 
                 client.close()
                 
-                return documents
+                return documents, True
 
             else:
                 client.close()

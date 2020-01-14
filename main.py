@@ -21,6 +21,7 @@ from gensim.models import KeyedVectors
 
 from features import FeatureExtractor
 from AddExamples import AddExamples
+from trainingManager import Trainer
 
 warnings.filterwarnings('ignore')
 
@@ -135,32 +136,11 @@ def addexample():
 def train():
   if request.method=="POST":
     bot_id = request.args.get("botID")
-    BOT_HOME = os.path.join(BOT_BASE,bot_id)
-    trained_data_home = os.path.join(BOT_HOME,"trained_data")
-    training_data_home = os.path.join(BOT_HOME,"training_data")
 
-    vocab_home = os.path.join(BOT_HOME,"vocab_repo")
-    vocab_file_path = os.path.join(vocab_home,bot_id+".pickle")
+    obj = Trainer(bot_id)
+    response = obj.train(wv)
 
-    if os.path.exists(os.path.join(training_data_home,bot_id+".csv")):
-      df = pd.read_csv(os.path.join(training_data_home,bot_id+".csv"))
-      grouped_df = df.groupby("intent")
-      intents = list(grouped_df.groups.keys())
-      for intent in intents:
-        try:
-          filtered_group = grouped_df.get_group(intent)
-          sentences = list(filtered_group.sentence)
-
-          feature_vector = extractor.get_feature_vector_train(sentences,vocab_file_path)
-          np.save(os.path.join(trained_data_home,intent+".npy"),feature_vector)
-        except:
-          return Response(json.dumps({"Status":"failed","Message":'INTERNAL ERROR!',"intent":"null","confidence":"null"}),status=500,mimetype='application/json')
-
-      return Response(json.dumps({"Status":"success","Message":'Training has completed',"intent":"null","confidence":"null"}),mimetype='application/json')
-
-    else:
-      return Response(json.dumps({"Status":"failed","Message":'You have no data to train',"intent":"null","confidence":"null"}),status=404,mimetype='application/json')
-    
+    return Response(json.dumps(response),mimetype='application/json')
   else:
     return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
 
