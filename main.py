@@ -31,7 +31,7 @@ abs_path = os.path.dirname(os.path.abspath(__file__))
 
 BOT_BASE = os.path.join(abs_path,"BOT_DATA")
 
-
+ 
 try:
     print("Loading Model in a RAM...")
     wv = KeyedVectors.load(os.path.join(abs_path,"MODELS/keyesvectors.kv"))
@@ -158,6 +158,7 @@ def createprofile():
           os.mkdir(BOT_HOME+"/training_data")
           os.mkdir(BOT_HOME+"/trained_data")
           os.mkdir(BOT_HOME+"/vocab_repo")
+          os.mkdir(BOT_HOME+"/entity_model")
 
           return Response(json.dumps({"Status":"success","Message":'Bot Profile has created successfully',"intent":"null","confidence":"null"}),mimetype='application/json')
         except:

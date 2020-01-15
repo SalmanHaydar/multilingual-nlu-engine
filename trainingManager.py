@@ -1,7 +1,7 @@
 import os
 from intentTrainer import IntentTrainer
 from entityTrainer import EntityTrainer
-
+ 
 class Trainer:
     def __init__(self,botid):
         self.botid = botid
@@ -9,7 +9,7 @@ class Trainer:
     def trainIntent(self,wv):
         obj = IntentTrainer(self.botid,wv)
         response, status = obj.train()
-        print(response)
+        # print(response)
         return status
 
     def trainEntity(self):

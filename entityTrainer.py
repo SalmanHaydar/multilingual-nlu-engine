@@ -12,7 +12,7 @@ from sklearn_crfsuite import metrics
 import config as cfg
 from dataTransformer import Transformer
 from entityFeatureExt import get_feature,get_label
-
+ 
 class EntityTrainer:
     def __init__(self,botid):
         self.botid = botid

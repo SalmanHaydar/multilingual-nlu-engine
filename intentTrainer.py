@@ -2,7 +2,7 @@ import os
 import numpy as np
 from features import FeatureExtractor
 from dataTransformer import Transformer
-
+ 
 class IntentTrainer:
     def __init__(self,botid,wv=None):
         self.wv = wv

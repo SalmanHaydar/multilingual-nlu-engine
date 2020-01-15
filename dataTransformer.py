@@ -1,13 +1,13 @@
 from pymongo import MongoClient
 import config as cfg
-
+ 
 class Transformer:
     def __init__(self,botid):
         self.botid = botid
 
     def initiateDB(self):
         try:
-            client = MongoClient(cfg.HOST,cfg.PORT)
+            client = MongoClient(cfg.HOST,cfg.DB_PORT)
             db = client[cfg.DB_NAME]
             collection = db[cfg.COLLECTION_NAME]
         except:
