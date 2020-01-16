@@ -22,6 +22,7 @@ from gensim.models import KeyedVectors
 from features import FeatureExtractor
 from AddExamples import AddExamples
 from trainingManager import Trainer
+from inferenceManager import Inference
 
 warnings.filterwarnings('ignore')
 
@@ -46,66 +47,14 @@ def getIntent():
 
   if request.method == "GET":
 
-
-    payloads = {"Status":"","Message":"","intent":"","confidence":""}
     bot_id = request.args.get("botID")
     sentence = request.args.get("sentence").lower()
-    # print(request.args)
-    
-    # print(query_vec.shape)
 
-    if(os.path.exists(os.path.join(BOT_BASE,bot_id))):
-      
-      into_home = os.path.join(BOT_BASE,bot_id)
+    inf = Inference(bot_id, sentence, wv)
 
-      vocab_home = os.path.join(into_home,"vocab_repo")
-      vocab_file_path = os.path.join(vocab_home,bot_id+".pickle")
-      query_vec,matched_words_ratio = extractor.get_feature_vector_infer(sentence,vocab_file_path)
+    response = inf.infer()
 
-      if(os.path.exists(os.path.join(into_home,"trained_data"))):
-        intent_files = [ f.split(".")[0] for f in os.listdir(os.path.join(into_home,"trained_data"))]
-
-        result_dic = {}
-        confidence = {}
-        confidence_cosine = {}
-
-        print(intent_files)
-        trained_data_repo = os.path.join(into_home,"trained_data")
-        # print(os.listdir(os.path.join(into_home,"trained_data")))
-        for intent in intent_files:
-            intent_vec = np.load(os.path.join(trained_data_repo,intent+".npy"))
-            result_dic[intent] = cosine_similarity(query_vec,intent_vec)[0][0]
-            # confidence[intent] = str(distance.euclidean(query_vec,intent_vec))
-            confidence_cosine[intent] = str(cosine_similarity(query_vec,intent_vec)[0][0])
-        print(result_dic)
-        res = max(result_dic, key=result_dic.get)
-
-        if matched_words_ratio*100>50.0 and float(result_dic[res])*100 < 50.0:
-          payloads["intent"] = "unknown"
-          payloads["Status"] = "success"
-          payloads["Message"] = "Couldn't understand properly"
-        elif matched_words_ratio*100<50.0 and float(result_dic[res])*100 < 70.0:
-          payloads["intent"] = "unknown"
-          payloads["Status"] = "success"
-          payloads["Message"] = "Couldn't understand properly"
-        else:
-          payloads["intent"] = res
-          payloads["Status"] = "success"
-          payloads["Message"] = "null"
-
-        # payloads["confidence"] = confidence
-        payloads['confidence'] = confidence_cosine
-
-        return Response(json.dumps(payloads),mimetype='application/json')
-
-      else:
-        
-        return Response(json.dumps({"Status":"failed","Message":'Error!! Your Bot is not yet trained',"intent":"null","confidence":"null"}),mimetype='application/json')
-
-    else:
-      
-      return Response(json.dumps({"Status":"failed","Message":'Error!! No Bot found with this Bot ID',"intent":"null","confidence":"null"}),status=404,mimetype='application/json')
-
+    return Response(json.dumps(response),status=200,mimetype='application/json')
   else:
       return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status=405,mimetype='application/json')
 

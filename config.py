@@ -3,7 +3,7 @@ import os
 #Database Config
 DB_NAME = "Chatlogy"
 COLLECTION_NAME = "DataRepo"
-BOT_PROFILE = ''
+BOT_PROFILE = 'BotProfile'
 HOST = "182.160.104.220"
 DB_PORT = 27017
 
