@@ -37,7 +37,7 @@ try:
     wv = KeyedVectors.load(cfg.MODEL_PATH)
     print("Model Loaded in a RAM successfully...")
 except:
-    print("Cannot Load Embedding Model")
+    raise Exception("Cannot Load Embedding Model.")
 
 
 @app.route("/getintent",methods=["GET","POST"])
@@ -63,7 +63,10 @@ def addexample():
 
   if request.method == "PUT":
 
-    data = request.get_json(force=True)
+    """{ "botID" : "train", "sentence" : "I want to book a ticket from dhaka to dinajpur", 
+        "intent" : "buy_ticket", "entity" : {"dhaka" : "location", "dinajpur" : "location"}}"""
+
+    data = request.get_json(force=True) 
 
     bot_id = data.get("botID")
     sentence = data.get("sentence")
@@ -75,7 +78,6 @@ def addexample():
 
     return Response(json.dumps(response),mimetype='application/json')
   else:
-
     return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),mimetype='application/json',status=405)
 
 
