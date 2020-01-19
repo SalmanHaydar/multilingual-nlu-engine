@@ -23,24 +23,22 @@ from features import FeatureExtractor
 from AddExamples import AddExamples
 from trainingManager import Trainer
 from inferenceManager import Inference
+from DButills import DButills
+import config as cfg
 
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/getintent/*": {"origins": "*"}})
-abs_path = os.path.dirname(os.path.abspath(__file__))
 
-BOT_BASE = os.path.join(abs_path,"BOT_DATA")
 
- 
 try:
     print("Loading Model in a RAM...")
-    wv = KeyedVectors.load(os.path.join(abs_path,"MODELS/keyesvectors.kv"))
+    wv = KeyedVectors.load(cfg.MODEL_PATH)
     print("Model Loaded in a RAM successfully...")
 except:
     print("Cannot Load Embedding Model")
 
-extractor = FeatureExtractor(wv)
 
 @app.route("/getintent",methods=["GET","POST"])
 def getIntent():
@@ -98,36 +96,12 @@ def train():
 def createprofile():
   bot_id = request.args.get("botID")
   if request.method=="POST":
-    if not os.path.exists(os.path.join(BOT_BASE,bot_id)):
+    obj = DButills(bot_id)
+    response = obj.createBotProfile()
 
-      try:
-        os.mkdir(BOT_BASE+"/"+bot_id)
-        try:
-          BOT_HOME = os.path.join(BOT_BASE,bot_id)
-          os.mkdir(BOT_HOME+"/training_data")
-          os.mkdir(BOT_HOME+"/trained_data")
-          os.mkdir(BOT_HOME+"/vocab_repo")
-          os.mkdir(BOT_HOME+"/entity_model")
-
-          return Response(json.dumps({"Status":"success","Message":'Bot Profile has created successfully',"intent":"null","confidence":"null"}),mimetype='application/json')
-        except:
-          return Response(json.dumps({"Status":"failed","Message":'cannot create the profile',"intent":"null","confidence":"null"}),mimetype='application/json')
-      except:
-        return Response(json.dumps({"Status":"failed","Message":'cannot create the profile',"intent":"null","confidence":"null"}),mimetype='application/json')
-      # if r==0:
-      #  
-      #   BOT_HOME = os.path.join(BOT_BASE,bot_id)
-      #   rr = os.mkdir(BOT_HOME+"/training_data")
-      #   rrr = os.mkdir(BOT_HOME+"/trained_data")
-      #   if rr==0 and rrr==0:
-      #     return json.dumps('Bot profile has created successfully!')
-      #   else:
-      #     return json.dumps('cannot create the profile [rr]')
-      # else:
-      #   return json.dumps('cannot create the profile [r]')
-    else:
-      
-      return Response(json.dumps({"Status":"failed","Message":'Bot with this ID is already exists',"intent":"null","confidence":"null"}),mimetype='application/json')
+    return Response(json.dumps(response),status= 200,mimetype='application/json')
+  else:
+    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
 
 
 @app.route("/",methods=["GET","POST"])
