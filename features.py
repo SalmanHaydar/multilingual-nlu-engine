@@ -1,12 +1,15 @@
+
 import numpy as np
 import pickle
 import os
 from utills import UtilityFunction
 
 
+
 class FeatureExtractor:
 
     def __init__(self,embedding=None):
+
         self.wv = embedding
         
         self.pruning_factor_alpha = 1
@@ -53,6 +56,7 @@ class FeatureExtractor:
         else:
             preprocessing = UtilityFunction(sentence)
             sentence = preprocessing.preprocess()
+            
             total_matched_words = 0
             with open (path, 'rb') as fp:
                 vocab_repo = pickle.load(fp)

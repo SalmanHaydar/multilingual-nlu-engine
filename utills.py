@@ -13,7 +13,7 @@ class UtilityFunction:
               'আপনার','কোন']
 
     def preprocess(self):
-        if type(self.sentences)==str:
+        if type(self.sentences) == str:
             prepared_data = []
             removeChar = '০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯'.split()
             s = re.sub('[^\u0980-\u09ffa-zA-Z_]+', ' ', str(self.sentences))
@@ -25,7 +25,7 @@ class UtilityFunction:
                     prepared_data.append(word)
             return ' '.join(prepared_data)
 
-        elif type(self.sentences)==list:
+        elif type(self.sentences) == list:
             prepared_data = []
             
             removeChar = '০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯'.split()
