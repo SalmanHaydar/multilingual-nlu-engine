@@ -18,6 +18,7 @@ from flask_cors import CORS
 from sklearn.metrics.pairwise import cosine_similarity
 from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
+from celery import Celery
 
 from features import FeatureExtractor
 from AddExamples import AddExamples
@@ -30,6 +31,12 @@ warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/getintent/*": {"origins": "*"}})
+
+app.config['CELERY_BROKER_URL'] = cfg.BROKER_URL
+app.config['CELERY_RESULT_BACKEND'] = cfg.BROKER_URL
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 
 try:
@@ -88,7 +95,7 @@ def train():
 
     obj = Trainer(bot_id)
     response = obj.train(wv)
-
+    print(response)
     return Response(json.dumps(response),mimetype='application/json')
   else:
     return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
@@ -115,3 +122,4 @@ def index():
 
 if __name__=="__main__":
   app.run(host="0.0.0.0",port=5000,debug=True)
+ 

@@ -19,9 +19,9 @@ class DButills:
 
         return client, collection
 
-    def doesThisBOTExist(self):
+    def doesThisBOTExist(self, table=cfg.BOT_PROFILE):
 
-        client, collection = self.initiateDB(table=cfg.BOT_PROFILE)
+        client, collection = self.initiateDB(table=table)
         res = collection.find_one({"botID":self.botid})
 
         if res:
