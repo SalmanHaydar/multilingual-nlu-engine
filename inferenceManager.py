@@ -64,7 +64,7 @@ class Inference:
 
             entity_response = self.predict_entity()
             response["entities"] = entity_response
-            print(entity_response)
+            # print(entity_response)
             return response
         else:
 
