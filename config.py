@@ -12,4 +12,8 @@ BOT_BASE = os.path.join(abs_path,"BOT_DATA")
 
 MODEL_PATH = os.path.join(abs_path,"MODELS/keyesvectors.kv")
 
+#Redis Configuration
+
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+
 

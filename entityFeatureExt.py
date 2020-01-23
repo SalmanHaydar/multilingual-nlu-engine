@@ -41,5 +41,5 @@ def get_label(sent_row):
             temp_list.append(sent_row["entity"][word])
         else:
             temp_list.append('O')
-    print(temp_list)
+    # print(temp_list)
     return temp_list

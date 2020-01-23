@@ -1,8 +1,14 @@
 import os
 import numpy as np
+import config as cfg
 from features import FeatureExtractor
 from dataTransformer import Transformer
- 
+from celery import Celery
+import traceback
+from gensim.models import KeyedVectors
+
+celery = Celery('main', broker=cfg.BROKER_URL, backend=cfg.BROKER_URL)
+
 class IntentTrainer:
     def __init__(self,botid,wv=None):
         self.wv = wv
@@ -37,17 +43,32 @@ class IntentTrainer:
         extractor = self.get_extractor()
 
         if not extractor:
-            return {"Status":"failed","Message":'Please Pass the Word2Vec Keyvector.',"intent":"null","confidence":"null"}, False
+            raise Exception("Please Pass the Word2Vec Keyvector.")
+            # return {"Status":"failed","Message":'Please Pass the Word2Vec Keyvector.',"intent":"null","confidence":"null"}, False
         
-        for intent in groupedData.keys():
-            sentences = groupedData[intent]
-            try:
-                feature_vector = extractor.get_feature_vector_train(sentences,self.vocab_file_path)
-                print(self.trained_data_home)
-                np.save(os.path.join(self.trained_data_home,str(intent)+".npy"),feature_vector)
-            except:
+        try:
+            global_train_and_save.delay(groupedData, self.vocab_file_path, self.trained_data_home)
+            return True
+        except Exception:
+            traceback.print_exc()
+            return False
 
-                return {"Status":"failed","Message":'Something bad happened during saving the weights.',"intent":"null","confidence":"null"}, False
+@celery.task
+def global_train_and_save(groupedData, vocab_file_path, trained_data_home):
+    try:
+        # print("Loading Model in a RAM...")
+        wv = KeyedVectors.load(cfg.MODEL_PATH)
+        print("Model Loaded in a RAM successfully...")
+    except:
+        raise Exception("Cannot Load Embedding Model.")
+
+    extractor = FeatureExtractor(wv)
+    print("Intent Model is Training")
+    for intent in groupedData.keys():
         
-        return True, True
-
+        sentences = groupedData[intent]
+        try:
+            feature_vector = extractor.get_feature_vector_train(sentences,vocab_file_path)
+            np.save(os.path.join(trained_data_home,str(intent)+".npy"),feature_vector)
+        except:
+            raise Exception("Something bad happened during saving the weights.")
