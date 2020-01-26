@@ -19,9 +19,9 @@ class DButills:
 
         return client, collection
 
-    def doesThisBOTExist(self):
+    def doesThisBOTExist(self, table=cfg.BOT_PROFILE):
 
-        client, collection = self.initiateDB(table=cfg.BOT_PROFILE)
+        client, collection = self.initiateDB(table=table)
         res = collection.find_one({"botID":self.botid})
 
         if res:
@@ -57,6 +57,7 @@ class DButills:
                 os.mkdir(BOT_HOME+"/trained_data")
                 os.mkdir(BOT_HOME+"/vocab_repo")
                 os.mkdir(BOT_HOME+"/entity_model")
+                os.mkdir(BOT_HOME+"/intent_model")
 
                 client.close()
                 return {"Status":"success","Message":'Bot profile has created successfully.',"intent":"null","confidence":"null"}

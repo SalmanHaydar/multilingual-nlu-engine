@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from DButills import DButills
 import config as cfg
 
 class AddExamples:
@@ -10,7 +11,7 @@ class AddExamples:
 
     def initiateDB(self):
         try:
-            client = MongoClient(cfg.HOST,cfg.PORT)
+            client = MongoClient(cfg.HOST,cfg.DB_PORT)
             db = client[cfg.DB_NAME]
             collection = db[cfg.COLLECTION_NAME]
         except:
@@ -31,9 +32,9 @@ class AddExamples:
 
         return document
 
-    def doesThisBOTExist(self,db):
+    def doesThisBOTExist(self):
 
-        res = db.find_one({"botID":self.botid})
+        res = DButills(self.botid).doesThisBOTExist()
 
         if res:
             return True
@@ -44,7 +45,7 @@ class AddExamples:
         client, db = self.initiateDB()
 
         if db:
-            if self.doesThisBOTExist(db):
+            if self.doesThisBOTExist():
 
                 document = self.makeDocument()
 
@@ -57,13 +58,13 @@ class AddExamples:
 
                         return {"Status":"success","Message":'Added Successfully',"intent":"null","confidence":"null"}
                     else:
-                        return {"Status":"failed","Message":'Could not add',"intent":"null","confidence":"null"}
+                        return {"Status":"failed","Message":'Could not add data',"intent":"null","confidence":"null"}
                 else:
                     return {"Status":"failed","Message":'One or More data is missing!',"intent":"null","confidence":"null"}
             else:
                 return {"Status":"failed","Message":'There is no bot found with this name.',"intent":"null","confidence":"null"}
         else:
-            return {"Status":"failed","Message":'Could not connect to the database.',"intent":"null","confidence":"null"}
+            raise Exception("Cannot Connect to the database")
 
               
                     

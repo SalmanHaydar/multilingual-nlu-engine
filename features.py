@@ -47,6 +47,31 @@ class FeatureExtractor:
 
             return np.mean(sentence_vectors,axis=0).reshape(1,-1)
 
+    def get_feature_for_text_classification(self, row, maxlen=10, padding_with=0):
+
+        temp_list = []
+        features = {}
+        
+        features["Bias"] = 1.0
+    #     features["length"] = len(row['sentence'].split(" "))
+        
+        # offer ki ache
+        for i,word in enumerate(row['sentence'].split(" ")):
+            if i+1<=maxlen:
+                features['word'+str(i+1)] = word
+                try:
+                    features['word'+str(i+1)+"-w2v"] = np.mean(self.wv[word])
+                except:
+                    features['word'+str(i+1)+"-w2v"] = 0.0
+
+        if i+1<maxlen:
+            for j in range(i+1, maxlen):
+                features['word'+str(j+1)] = ""
+                features['word'+str(j+1)+"-w2v"] = padding_with
+                
+        temp_list.append(features)
+            
+        return temp_list
 
     def get_feature_vector_infer(self,sentence,path):
 

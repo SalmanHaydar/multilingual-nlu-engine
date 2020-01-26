@@ -21,36 +21,50 @@ class Inference:
 
         return vocabulary_path
 
-    def get_model_file_path(self):
+    def get_model_file_path(self,which='entity'):
 
-        model_name = str(self.botid)+".pkl"
-        model_path = os.path.join(cfg.BOT_BASE,str(self.botid)+"/entity_model/"+model_name)
+        if which=='entity':
+            model_name = str(self.botid)+".pkl"
+            model_path = os.path.join(cfg.BOT_BASE,str(self.botid)+"/entity_model/"+model_name)
+
+        elif which=='intent':
+            model_name = str(self.botid)+".pkl"
+            model_path = os.path.join(cfg.BOT_BASE,str(self.botid)+"/intent_model/"+model_name)
 
         return model_path
 
     def predict_intent(self):
-        
+        model = self.load_intent_model()
         obj = FeatureExtractor(self.wv)
+        features = obj.get_feature_for_text_classification(row={'sentence':self.sentence})
 
-        vocabulary_path = self.get_vocab_file_path()
+        # vocabulary_path = self.get_vocab_file_path()
         
-        query_vec, matched_words_ratio = obj.get_feature_vector_infer(self.sentence,vocabulary_path)
+        # query_vec, matched_words_ratio = obj.get_feature_vector_infer(self.sentence,vocabulary_path)
 
-        response = IntPredictor(self.botid,query_vec,matched_words_ratio).predict()
+        response = IntPredictor(self.botid,features,model).predict()
 
         return response
 
     def load_entity_model(self):
         try:
-            model = load(open(self.get_model_file_path(), 'rb'))
+            model = load(open(self.get_model_file_path(which='entity'), 'rb'))
         except:
-            raise Exception("Cannot Load the model")
+            raise Exception("Cannot Load the Entity model")
+    
+        return model
+
+    def load_intent_model(self):
+        try:
+            model = load(open(self.get_model_file_path(which='intent'), 'rb'))
+        except:
+            raise Exception("Cannot Load the Intent model")
     
         return model
         
     def predict_entity(self):
         model = self.load_entity_model()
-        lookupTable = lookupTable = DButills(self.botid).getLookupTable()
+        lookupTable = DButills(self.botid).getLookupTable()
 
         prediction = EntPredictor(model, self.sentence, lookupTable).predict()
 
@@ -64,7 +78,7 @@ class Inference:
 
             entity_response = self.predict_entity()
             response["entities"] = entity_response
-            print(entity_response)
+            # print(entity_response)
             return response
         else:
 
