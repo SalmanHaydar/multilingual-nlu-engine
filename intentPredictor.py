@@ -23,8 +23,17 @@ class IntPredictor:
 
             prediction = self.model.predict_marginals_single(self.features)
             res = max(prediction[0], key=prediction[0].get)
+
+            confidence = {}
+            for intent in prediction[0].keys():
+                confidence[intent] = str(prediction[0][intent])
             
-            payloads["intent"] = res
+            res_confidence = prediction[0][res]
+            if res_confidence*100 < 46.0:
+                payloads["intent"] = "unknown"
+            else:
+                payloads["intent"] = res
+
             payloads["Status"] = "success"
             payloads["Message"] = "null"
             # intent_files = [ f.split(".")[0] for f in os.listdir(os.path.join(into_home,"trained_data"))]
@@ -60,7 +69,7 @@ class IntPredictor:
             #     payloads["Message"] = "null"
 
             # payloads["confidence"] = confidence
-            payloads['confidence'] = str(prediction[0])
+            payloads['confidence'] = confidence
 
             return payloads
 
