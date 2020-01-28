@@ -1,5 +1,5 @@
-from main import app
+from main import app as application
 
 if __name__=="__main__":	
-	app.run(port=5656)
+	application.run(port=5656)
 
