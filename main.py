@@ -64,7 +64,6 @@ def getIntent():
       return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status=405,mimetype='application/json')
 
 
-
 @app.route("/addexample",methods=["GET","POST","PUT"])
 def addexample():
 
@@ -95,7 +94,7 @@ def train():
 
     obj = Trainer(bot_id)
     response = obj.train(wv)
-    print(response)
+    # print(response)
     return Response(json.dumps(response),mimetype='application/json')
   else:
     return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
