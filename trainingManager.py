@@ -1,7 +1,7 @@
 import os
 from intentTrainer import IntentTrainer
 from entityTrainer import EntityTrainer
-from DButils import DButils
+from DButills import DButills
  
 class Trainer:
     def __init__(self,botid):

@@ -66,6 +66,38 @@ class DButills:
         else:
             return {"Status":"failed","Message":'A Bot with this ID is already exist',"intent":"null","confidence":"null"}
 
+    def deleteOne(self,sentence):
+        if sentence:
+            client, collection = self.initiateDB()
+            result = collection.delete_one({"botID":self.botid,"sentence":sentence})
+
+            client.close()
+
+            if result.deleted_count:
+
+                return {"Status":"success","deleted_data":result.deleted_count,"Message":'sentence has been deleted successfully.'}
+            else:
+                return {"Status":"success","deleted_data":result.deleted_count,"Message":'No sentence has been found.'}
+
+        else:
+            return {"Status":"success","deleted_data":'0',"Message":'No sentence has been passed.'}
+
+    def deleteMany(self,intent):
+        if intent:
+            client, collection = self.initiateDB()
+            result = collection.delete_many({"botID":self.botid,"intent":intent})
+
+            client.close()
+
+            if result.deleted_count:
+
+                return {"Status":"success","deleted_data":result.deleted_count,"Message":'intent has been deleted successfully.'}
+            else:
+                return {"Status":"success","deleted_data":result.deleted_count,"Message":'No intent has been found.'}
+
+        else:
+            return {"Status":"success","deleted_data":0,"Message":'No intent name has been passed.'}
+
     
 
     

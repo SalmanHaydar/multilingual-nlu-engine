@@ -111,6 +111,31 @@ def createprofile():
   else:
     return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
 
+@app.route("/deletesample",methods=["GET","POST"])
+def deleteSample():
+  bot_id = request.args.get("botID")
+  sample = request.args.get("sentence")
+  if request.method == "POST":
+    obj = DButills(bot_id)
+    response = obj.deleteOne(sample)
+
+    return Response(json.dumps(response),status= 200,mimetype='application/json')
+  else:
+    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
+
+@app.route("/deleteintent",methods=["GET","POST"])
+def deleteIntent():
+  bot_id = request.args.get("botID")
+  intent = request.args.get("intent")
+  if request.method == "POST":
+    obj = DButills(bot_id)
+    response = obj.deleteMany(intent)
+
+    return Response(json.dumps(response),status= 200,mimetype='application/json')
+  else:
+    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
+
+
 
 @app.route("/",methods=["GET","POST"])
 def index():
