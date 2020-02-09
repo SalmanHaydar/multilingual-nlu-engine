@@ -3,26 +3,31 @@ import config as cfg
 import datetime
 import secrets
 import os
+import warnings
+
+warnings.filterwarnings('ignore')
+
 
 class DButills:
-    def __init__(self,botid=None):
+
+    def __init__(self, botid=None):
         self.botid = botid
 
-    def initiateDB(self,table=cfg.COLLECTION_NAME):
+    def initiateDB(self, table=cfg.COLLECTION_NAME):
         try:
-            client = MongoClient(cfg.HOST,cfg.DB_PORT)
+            client = MongoClient(cfg.HOST, cfg.DB_PORT)
             db = client[cfg.DB_NAME]
             collection = db[table]
             # print(table)
         except:
-            raise Exception("Cannot connect the databse.")
+            raise Exception("Cannot connect to the database.")
 
         return client, collection
 
     def doesThisBOTExist(self, table=cfg.BOT_PROFILE):
 
         client, collection = self.initiateDB(table=table)
-        res = collection.find_one({"botID":self.botid})
+        res = collection.find_one({"botID": self.botid})
 
         if res:
             client.close()
@@ -32,7 +37,7 @@ class DButills:
 
     def getLookupTable(self):
         client, collection = self.initiateDB(table=cfg.COLLECTION_NAME)
-        dataRows = collection.find({"botID":self.botid},{"_id":0})
+        dataRows = collection.find({"botID": self.botid}, {"_id": 0})
 
         dictionary = {}
         
@@ -48,56 +53,71 @@ class DButills:
         client, table = self.initiateDB(table=cfg.BOT_PROFILE)
         if not self.doesThisBOTExist():
             try:
-                data = {"botID":self.botid, "botName":"Yet to Implement", "accessToken":secrets.token_hex(16),"creationTime":datetime.datetime.now()}
+                data = {"botID": self.botid, "botName": "Yet to Implement", "accessToken": secrets.token_hex(16), "creationTime": datetime.datetime.now()}
                 table.insert_one(data)
 
                 os.mkdir(cfg.BOT_BASE+"/"+self.botid)
-                BOT_HOME = os.path.join(cfg.BOT_BASE,self.botid)
-                os.mkdir(BOT_HOME+"/training_data")
-                os.mkdir(BOT_HOME+"/trained_data")
+                BOT_HOME = os.path.join(cfg.BOT_BASE, self.botid)
+                # os.mkdir(BOT_HOME+"/training_data")
+                # os.mkdir(BOT_HOME+"/trained_data")
                 os.mkdir(BOT_HOME+"/vocab_repo")
                 os.mkdir(BOT_HOME+"/entity_model")
                 os.mkdir(BOT_HOME+"/intent_model")
 
                 client.close()
-                return {"Status":"success","Message":'Bot profile has created successfully.',"intent":"null","confidence":"null"}
+                return {"Status": "success", "Message": 'Bot profile has created successfully.', "intent": "null", "confidence": "null"}
             except:
                 raise Exception("Cannot Create a BOT profile")
         else:
-            return {"Status":"failed","Message":'A Bot with this ID is already exist',"intent":"null","confidence":"null"}
+            return {"Status": "failed", "Message": 'A Bot with this ID is already exist', "intent": "null", "confidence": "null"}
 
-    def deleteOne(self,sentence):
+    def deleteOne(self, sentence):
         if sentence:
             client, collection = self.initiateDB()
-            result = collection.delete_one({"botID":self.botid,"sentence":sentence})
+            result = collection.delete_one({"botID": self.botid, "sentence": sentence})
 
             client.close()
 
             if result.deleted_count:
 
-                return {"Status":"success","deleted_data":result.deleted_count,"Message":'sentence has been deleted successfully.'}
+                return {"Status": "success", "deleted_data": result.deleted_count, "Message": 'sentence has been deleted successfully.'}
             else:
-                return {"Status":"success","deleted_data":result.deleted_count,"Message":'No sentence has been found.'}
+                return {"Status": "success", "deleted_data": result.deleted_count, "Message": 'No sentence has been found.'}
 
         else:
-            return {"Status":"success","deleted_data":'0',"Message":'No sentence has been passed.'}
+            return {"Status": "success", "deleted_data": '0', "Message": 'No sentence has been passed.'}
 
-    def deleteMany(self,intent):
+    def deleteMany(self, intent):
         if intent:
             client, collection = self.initiateDB()
-            result = collection.delete_many({"botID":self.botid,"intent":intent})
+            result = collection.delete_many({"botID": self.botid, "intent": intent})
 
             client.close()
 
             if result.deleted_count:
 
-                return {"Status":"success","deleted_data":result.deleted_count,"Message":'intent has been deleted successfully.'}
+                return {"Status": "success", "deleted_data": result.deleted_count, "Message": 'intent has been deleted successfully.'}
             else:
-                return {"Status":"success","deleted_data":result.deleted_count,"Message":'No intent has been found.'}
+                return {"Status": "success", "deleted_data": result.deleted_count, "Message": 'No intent has been found.'}
 
         else:
-            return {"Status":"success","deleted_data":0,"Message":'No intent name has been passed.'}
+            return {"Status":"success", "deleted_data": 0, "Message": 'No intent name has been passed.'}
 
-    
+    def getsamples(self,intent=None):
 
-    
+        client, collection = self.initiateDB()
+
+        if intent:
+            dataRows = collection.find({"botID": self.botid, "intent": intent}, {"botID":0, "_id": 0})
+        else:
+            dataRows = collection.find({"botID": self.botid}, {"botID":0, "_id": 0})
+
+        temp_list = []
+
+        for row in dataRows:
+            temp_list.append(row)
+
+        # if len(temp_list)<1:
+        #     return {"Status": "success", "Message": 'No data had been found', "intent": "null", "confidence": "null"}
+
+        return temp_list

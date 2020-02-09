@@ -47,7 +47,7 @@ except:
     raise Exception("Cannot Load Embedding Model.")
 
 
-@app.route("/getintent",methods=["GET","POST"])
+@app.route("/getintent", methods=["GET","POST"])
 def getIntent():
 
   if request.method == "GET":
@@ -59,12 +59,12 @@ def getIntent():
 
     response = inf.infer()
 
-    return Response(json.dumps(response),status=200,mimetype='application/json')
+    return Response(json.dumps(response), status=200, mimetype='application/json')
   else:
-      return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status=405,mimetype='application/json')
+      return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
 
 
-@app.route("/addexample",methods=["GET","POST","PUT"])
+@app.route("/addexample",methods=["GET", "POST", "PUT"])
 def addexample():
 
   if request.method == "PUT":
@@ -82,36 +82,37 @@ def addexample():
     add_obj = AddExamples(bot_id, sentence, intent, entity)
     response = add_obj.insertOne()
 
-    return Response(json.dumps(response),mimetype='application/json')
+    return Response(json.dumps(response), mimetype='application/json')
   else:
-    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),mimetype='application/json',status=405)
+    return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), mimetype='application/json', status=405)
 
 
-@app.route("/train",methods=["GET","POST"])
+@app.route("/train", methods=["GET", "POST"])
 def train():
-  if request.method=="POST":
+  if request.method == "POST":
     bot_id = request.args.get("botID")
 
     obj = Trainer(bot_id)
     response = obj.train(wv)
     # print(response)
-    return Response(json.dumps(response),mimetype='application/json')
+    return Response(json.dumps(response), mimetype='application/json')
   else:
-    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
+    return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
 
 
-@app.route("/createprofile",methods=["GET","POST"])
+@app.route("/createprofile", methods=["GET", "POST"])
 def createprofile():
   bot_id = request.args.get("botID")
-  if request.method=="POST":
+  if request.method == "POST":
     obj = DButills(bot_id)
     response = obj.createBotProfile()
 
-    return Response(json.dumps(response),status= 200,mimetype='application/json')
+    return Response(json.dumps(response), status=200, mimetype='application/json')
   else:
-    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
+    return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
 
-@app.route("/deletesample",methods=["GET","POST"])
+
+@app.route("/deletesample", methods=["GET", "POST"])
 def deleteSample():
   bot_id = request.args.get("botID")
   sample = request.args.get("sentence")
@@ -119,11 +120,12 @@ def deleteSample():
     obj = DButills(bot_id)
     response = obj.deleteOne(sample)
 
-    return Response(json.dumps(response),status= 200,mimetype='application/json')
+    return Response(json.dumps(response), status=200, mimetype='application/json')
   else:
-    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
+    return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
 
-@app.route("/deleteintent",methods=["GET","POST"])
+
+@app.route("/deleteintent", methods=["GET", "POST"])
 def deleteIntent():
   bot_id = request.args.get("botID")
   intent = request.args.get("intent")
@@ -131,19 +133,33 @@ def deleteIntent():
     obj = DButills(bot_id)
     response = obj.deleteMany(intent)
 
-    return Response(json.dumps(response),status= 200,mimetype='application/json')
+    return Response(json.dumps(response), status=200, mimetype='application/json')
   else:
-    return Response(json.dumps({"Status":"failed","Message":'This method is not allowed',"intent":"null","confidence":"null"}),status= 405,mimetype='application/json')
+    return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
+
+@app.route("/getsamples", methods=["GET", "POST"])
+def getsample():
+  bot_id = request.args.get("botID")
+  intent = request.args.get("intent")
+  
+  if request.method == "GET":
+    obj = DButills(bot_id)
+    response = obj.getsamples(intent)
+
+    return Response(json.dumps(response), status=200, mimetype='application/json')
+  else:
+    return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
 
 
-
-@app.route("/",methods=["GET","POST"])
+@app.route("/", methods=["GET", "POST"])
 def index():
-  if request.method == "GET" or request.method=="POST":
+  if request.method == "GET" or request.method == "POST":
 
     return render_template('sample-add.html')
     # return json.dumps('please see the api documentation.. https://docs.google.com/document/d/1twwLx2g315XpymM60ia7XZMF7ve-lTvm0IrbgfFtErg/edit?usp=sharing')
 
-if __name__=="__main__":
-  app.run(host="0.0.0.0",port=5000,debug=True)
- 
+
+if __name__ == "__main__":
+
+  app.run(host="0.0.0.0", port=5000, debug=True)
+
