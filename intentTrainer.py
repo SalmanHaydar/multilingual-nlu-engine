@@ -40,7 +40,7 @@ class IntentTrainer:
             extractor = FeatureExtractor(self.wv)
             return extractor
         else:
-            return False
+            return {"Status":"failed","Message":'There is no data to train.',"intent":"null","confidence":"null"}
 
     def get_feature_for_text_classification(self, row, maxlen=10, padding_with=0):
 
@@ -85,6 +85,10 @@ class IntentTrainer:
         if not status:
             return dataRows # It is the Response not Data
         dataRows = [row for row in dataRows]
+
+        if len(dataRows)<1:
+
+            return False
 
         X_train = [self.get_feature_for_text_classification(row, maxlen=10) for row in dataRows]
         y_train = [self.get_label_for_text_classification(row) for row in dataRows if 'intent' in row.keys()]

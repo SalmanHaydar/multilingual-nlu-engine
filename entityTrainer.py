@@ -23,13 +23,13 @@ class EntityTrainer:
     def getDataFromDB(self):
         
         obj = Transformer(self.botid)
-        data_rows, _ = obj.getDataForEntityModel()
+        data_rows, _ = obj.getDataForEntityModel() 
 
         return data_rows
 
     def getTrainingData(self):
         data_row = self.getDataFromDB()
-
+        print(data_row)
         X_train = [get_feature(sentence_row) for sentence_row in data_row if "entity" in sentence_row.keys()]
         data_row = self.getDataFromDB()
         y_train = [get_label(sentence_row) for sentence_row in data_row if "entity" in sentence_row.keys()]
@@ -50,7 +50,15 @@ class EntityTrainer:
         
         unique_labels = list(set(temp_list))
 
-        return unique_labels.remove('O')
+        try:
+
+            unique_labels.remove('O')
+
+        except Exception as e:
+
+            pass
+
+        return unique_labels
 
     def getEstimator(cv=5,classes=None):
         crf = sklearn_crfsuite.CRF(
@@ -96,10 +104,16 @@ class EntityTrainer:
         classes = self.getClasses(y_train)
 
         try:
+            if len(X_train)>0 and len(classes)>0:
 
-            global_fit_and_save.delay(self.botid, X_train, y_train, classes)
+                global_fit_and_save.delay(self.botid, X_train, y_train, classes)
 
-            return True
+                return True
+
+            else:
+
+                return True
+
         except:
             raise Exception('Entity Model is not trained.')
 

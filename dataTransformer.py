@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import config as cfg
+from DButills import DButills
  
 class Transformer:
     def __init__(self,botid):
@@ -15,21 +16,18 @@ class Transformer:
 
         return client, collection
 
-    def doesThisBOTExist(self,db):
+    def doesThisBOTExist(self):
 
-        res = db.find_one({"botID":self.botid})
+        obj = DButills(self.botid)
 
-        if res:
-            return True
-        else:
-            return False
+        return obj.doesThisBOTExist()
 
     def getDataForIntentModel(self):
         client, collection = self.initiateDB()
 
         if collection:
 
-            if self.doesThisBOTExist(collection):
+            if self.doesThisBOTExist():
 
                 dataRows = collection.find({"botID":self.botid}, {"_id":0,"botID":0,"entity":0})
 
@@ -68,7 +66,7 @@ class Transformer:
         if collection:
 
 
-            if self.doesThisBOTExist(collection):
+            if self.doesThisBOTExist():
 
                 documents = collection.find({"botID":self.botid}, {"_id":0,"botID":0})
                 print(documents.collection.count_documents({}))

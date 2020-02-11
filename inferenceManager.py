@@ -74,10 +74,19 @@ class Inference:
 
         if DButills(self.botid).doesThisBOTExist():
 
-            response = self.predict_intent()
+            if os.path.isfile(self.get_model_file_path(which="intent")):
 
-            entity_response = self.predict_entity()
-            response["entities"] = entity_response
+                response = self.predict_intent()
+            
+            else:
+
+                return {"Status":"failed","Message":'The BOT is not trained yet',"intent":"null","confidence":"null"}
+
+            if os.path.isfile(self.get_model_file_path(which="entity")):
+
+                entity_response = self.predict_entity()
+                response["entities"] = entity_response
+
             # print(entity_response)
             return response
         else:
