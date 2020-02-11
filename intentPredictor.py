@@ -29,7 +29,7 @@ class IntPredictor:
                 confidence[intent] = str(prediction[0][intent])
             
             res_confidence = prediction[0][res]
-            if res_confidence*100 < 46.0:
+            if res_confidence*100 < 40.0:
                 payloads["intent"] = "unknown"
             else:
                 payloads["intent"] = res
