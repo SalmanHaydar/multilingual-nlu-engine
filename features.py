@@ -59,6 +59,8 @@ class FeatureExtractor:
         for i,word in enumerate(row['sentence'].split(" ")):
             if i+1<=maxlen:
                 features['word'+str(i+1)] = word
+                features['word'+str(i+1)+"-postfix"] = word[0:2]
+                features['word'+str(i+1)+"-prefix"] = word[-2:]
                 try:
                     features['word'+str(i+1)+"-w2v"] = np.mean(self.wv[word])
                 except:

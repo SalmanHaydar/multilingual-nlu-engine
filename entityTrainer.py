@@ -60,7 +60,7 @@ class EntityTrainer:
 
         return unique_labels
 
-    def getEstimator(cv=5,classes=None):
+    def getEstimator(self,cv=5,classes=None):
         crf = sklearn_crfsuite.CRF(
             algorithm='lbfgs', 
             max_iterations=100, 
@@ -85,7 +85,7 @@ class EntityTrainer:
 
         return rs
 
-    def fit_and_save(botid, X_train, y_train, model):
+    def fit_and_save(self, botid, X_train, y_train, model):
         
         model.fit(X_train,y_train)
 
