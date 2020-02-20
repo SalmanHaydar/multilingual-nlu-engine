@@ -15,6 +15,7 @@ from sklearn_crfsuite import scorers
 from sklearn_crfsuite import metrics
 from gensim.models import KeyedVectors
 
+
 celery = Celery('main', broker=cfg.BROKER_URL, backend=cfg.BROKER_URL)
 
 class IntentTrainer:
