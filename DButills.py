@@ -121,3 +121,17 @@ class DButills:
         #     return {"Status": "success", "Message": 'No data had been found', "intent": "null", "confidence": "null"}
 
         return temp_list
+
+    def getIntents(self):
+
+        client, collection = self.initiateDB()
+
+        dataRows = collection.find({"botID" : self.botid}, {"_id" : 0, "botID" : 0, "entity" : 0})
+
+        intents = {}
+
+        for row in dataRows:
+            intents[row['intent']] = 1
+        
+        return list(intents.keys())
+
