@@ -150,6 +150,18 @@ def getsample():
   else:
     return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
 
+@app.route("/getintents", methods=["GET", "POST"])
+def getintents():
+  bot_id = request.args.get("botID")
+
+  if request.method == "GET":
+    obj = DButills(bot_id)
+    intents = obj.getIntents()
+
+    return Response(json.dumps({"intents":intents}), status=200, mimetype='application/json')
+  else:
+    return Response(json.dumps({"Status": "failed", "Message": 'This method is not allowed', "intent": "null", "confidence": "null"}), status=405, mimetype='application/json')
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
