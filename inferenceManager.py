@@ -100,7 +100,7 @@ class Inference:
             if os.path.isfile(self.get_model_file_path(which="intent")):
 
                 response = self.predict_intent()
-                response["language"] = self.get_language(self.sentence)
+                response["language"] = self.get_language(self.sentence.lower())
             
             else:
 
