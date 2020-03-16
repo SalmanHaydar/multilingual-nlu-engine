@@ -6,6 +6,7 @@ from features import FeatureExtractor
 from intentPredictor import IntPredictor
 from DButills import DButills
 from entityPredictor import EntPredictor
+from heuristic import Heuristic
 
 
 class Inference:
@@ -44,6 +45,10 @@ class Inference:
         # query_vec, matched_words_ratio = obj.get_feature_vector_infer(self.sentence,vocabulary_path)
 
         response = IntPredictor(self.botid,features,model).predict()
+
+        if response["intent"] == "unknown":
+            response["intent"] = Heuristic(self.botid).get_possible_intent(self.sentence)
+            response["main_model_output"] = "unknown"
 
         return response
 
