@@ -15,7 +15,7 @@ class DButills:
 
     def initiateDB(self, table=cfg.COLLECTION_NAME):
         try:
-            client = MongoClient(cfg.HOST, cfg.DB_PORT)
+            client = MongoClient(cfg.HOST, cfg.DB_PORT, username=cfg.USERNAME, password=cfg.PASSWORD)
             db = client[cfg.DB_NAME]
             collection = db[table]
             # print(table)

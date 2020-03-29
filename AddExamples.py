@@ -11,7 +11,7 @@ class AddExamples:
 
     def initiateDB(self):
         try:
-            client = MongoClient(cfg.HOST,cfg.DB_PORT)
+            client = MongoClient(cfg.HOST,cfg.DB_PORT, username=cfg.USERNAME, password=cfg.PASSWORD)
             db = client[cfg.DB_NAME]
             collection = db[cfg.COLLECTION_NAME]
         except:
