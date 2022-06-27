@@ -85,8 +85,9 @@ class Inference:
                     "koitam","khulbo","kholbo","koro","kora","chobi","cobi","kobi","vai","bhai","bhaia","kivabe","kemte","kemne",
                     "kibabhe","na","jbo","assa","acha","ase","pase","teka","ki","k","kk","ke","apnar","ache","ase","kno","er",
                     "toh","bhai","bon","vai","are","of","ami","apnader",'ki','tk','na','ta','ami','er','amar',"accnt","kolbo",
-                    "kebabe","kvbe","cai","peyechi","labu","babu","aho","vatija","bhatija","bal","phn","mob","kintu"
-                    ]
+                    "kebabe","kvbe","cai","peyechi","labu","babu","aho","vatija","bhatija","bal","phn","mob","kintu","amake", 
+                    "dekhan", "nai" ]
+        
         sent = re.sub('[.?:,*\\-//()<>\[\]#$@!%"";|{}+=]',"",sent)
         sent = sent.strip()
         
