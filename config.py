@@ -4,9 +4,9 @@ import os
 DB_NAME = "Chatlogy"
 COLLECTION_NAME = "DataRepo"
 BOT_PROFILE = 'BotProfile'
-HOST = "182.160.104.220"
-USERNAME = "admin"
-PASSWORD = "genexdb2020"
+HOST = ""
+USERNAME = ""
+PASSWORD = ""
 DB_PORT = 27017
 
 abs_path = os.path.dirname(os.path.abspath(__file__))
